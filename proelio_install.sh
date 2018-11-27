@@ -74,8 +74,9 @@ EOF
 
 
 function create_config() {
-  $COIN_PATH$COIN_DAEMON >/dev/null 2>&1
+  $COIN_PATH$COIN_DAEMON -daemon >/dev/null 2>&1
   sleep 5
+  $COIN_PATH$COIN_CLI stop
   RPCUSER=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)
   RPCPASSWORD=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w22 | head -n1)
   echo $CONFIGFOLDER/$CONFIG_FILE
@@ -116,10 +117,9 @@ clear
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
   cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
-
 logintimestamps=1
-maxconnections=256
-#bind=$NODEIP
+maxconnections=16
+bind=$NODEIP
 masternode=1
 masternodeaddr=$NODEIP:$COIN_PORT
 masternodeprivkey=$COINKEY
